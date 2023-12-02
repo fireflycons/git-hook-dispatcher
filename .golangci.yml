@@ -12,7 +12,6 @@ linters:
     - exportloopref
     - forcetypeassert
     - godot
-    - gofmt
     - gosimple
     - ineffassign
     - makezero
