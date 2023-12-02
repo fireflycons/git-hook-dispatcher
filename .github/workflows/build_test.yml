@@ -27,13 +27,15 @@ jobs:
         uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version-file: "go.mod"
-          args: --timeout=5m
         id: go
+        env:
+          GO111MODULE: off
 
       - name: Run linters
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
+          args: --timeout=5m
 
       - name: Build
         run: make build
