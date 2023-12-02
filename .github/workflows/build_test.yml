@@ -17,7 +17,7 @@ jobs:
   # Ensure project builds before running testing matrix
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 5
     steps:
       - name: Check out code into the Go module directory
