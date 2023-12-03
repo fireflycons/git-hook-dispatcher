@@ -54,6 +54,10 @@ func getModuleFileName() (string, error) {
 	return string(utf16.Decode(b[0:n])), nil
 }
 
+func debugEnabled() bool {
+	return os.Getenv("GITHOOK_DEBUG") != ""
+}
+
 func scriptNameWithoutExtension(hookDir, hookName, repo string) string {
 	return filepath.Join(hookDir, repo, hookName)
 }
@@ -70,6 +74,9 @@ func getHookScript(hookDir, hookName, repo string) (string, scriptType) {
 		for extension, typ := range scriptMap {
 			script := fmt.Sprintf("%s.%s", scriptNameWithoutExtension(hookDir, hookName, dir), extension)
 			if _, err := os.Stat(script); err == nil {
+				if debugEnabled() {
+					fmt.Printf("Will execute %s\n", script)
+				}
 				return script, typ
 			}
 		}
@@ -131,7 +138,9 @@ func processHook(actualBin string, hookName string) (int, bool) {
 	case powershell:
 		cmd = exec.Command("powershell", append([]string{"-File", script}, hookArgs...)...)
 	default:
-		fmt.Printf("(No hook %s.[bat|cmd|ps1])\n", scriptNameWithoutExtension(hookDir, hookName, repoName))
+		if debugEnabled() {
+			fmt.Printf("(No script found for hook %s)\n", hookName)
+		}
 		return 0, false
 	}
 
