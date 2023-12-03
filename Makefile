@@ -3,7 +3,7 @@ HOOK_DIR ?= ${USERPROFILE}\.githooks
 build: hook.exe
 
 hook.exe: main.go
-	go build -o hook.exe ./...
+	go build -ldflags "-s -w" -o hook.exe ./...
 
 lint:
 	golangci-lint run
