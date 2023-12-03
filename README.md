@@ -1,5 +1,8 @@
 # Git Hook Dispatcher for Windows
 
+
+![build](https://img.shields.io/github/actions/workflow/status/fireflycons/git-hook-dispatcher/build_test.yml)
+
 Setting up local hooks on Windows is problematic because git is built with POSIX filesystems in mind, so does not expect hook scripts to have file extensions, merely to be executable which on such filesystems is determined by file attributes. Windows determines whether a file is executable by its extension.
 
 This little utility helps you to run native Windows scripts e.g. batch/cmd or PowerShell when using git on Windows without needing git-bash or other such workarounds.
