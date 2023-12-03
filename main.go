@@ -124,9 +124,13 @@ func RunCommand(cmd *exec.Cmd) (exitCode int) {
 }
 
 func processHook(actualBin string, hookName string) (int, bool) {
+
+	// Hooks directory is the deirectory where this executable is found.
 	hookDir := filepath.Dir(actualBin)
 	hookArgs := os.Args[1:]
 	wd, _ := os.Getwd()
+
+	// Git executes the hook with the working directory set to the root of the repo.
 	repoName := filepath.Base(wd)
 
 	var cmd *exec.Cmd
@@ -141,9 +145,12 @@ func processHook(actualBin string, hookName string) (int, bool) {
 		if debugEnabled() {
 			fmt.Printf("(No script found for hook %s)\n", hookName)
 		}
+
+		// Exit zero (don't so action), and false to indicate no script run (for tests).
 		return 0, false
 	}
 
+	// Exit code of script, and true to indicate script was run.
 	return RunCommand(cmd), true
 }
 
@@ -156,7 +163,7 @@ func main() {
 	hookName := filepath.Base(os.Args[0])
 
 	// This will be the absolute path to the real executable,
-	// not any relative or symlinked path
+	// not any relative or symlinked path.
 	actualBin, err := getModuleFileName()
 
 	if err != nil {
@@ -166,6 +173,7 @@ func main() {
 
 	i := strings.LastIndex(hookName, ".")
 	if i > 1 {
+		// Strip extension.
 		hookName = hookName[:i]
 	}
 
