@@ -105,19 +105,20 @@ function Install-Symlinks
         Get-HookList |
         ForEach-Object {
             $create = $false
-            if (-not (Test-Path -Path $_ -PathType Leaf))
+            $link = "$_.exe"
+            if (-not (Test-Path -Path $link -PathType Leaf))
             {
                 $create = $true
             }
-            elseif (-not (Test-Symlink -Path $_)) {
+            elseif (-not (Test-Symlink -Path $link)) {
                 # Remove any copied .exe
-                Remove-Item $_
+                Remove-Item $link
                 $create = $true
             }
 
             if ($create)
             {
-                New-Item -ItemType SymbolicLink -Name "$_.exe" -Target hook.exe
+                New-Item -ItemType SymbolicLink -Name $link -Target hook.exe
             }
         }
     }
@@ -143,8 +144,6 @@ function Install-Copies
         Pop-Location
     }
 }
-
-$hooks = Get-HookList
 
 Install-Release
 
