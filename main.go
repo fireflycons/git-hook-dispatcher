@@ -11,16 +11,6 @@ import (
 	"unsafe"
 )
 
-// type workingDirectory interface {
-// 	get() (string, error)
-// }
-
-// type osWorkingDirectory struct{}
-
-// func (*osWorkingDirectory) get() (string, error) {
-// 	return os.Getwd()
-// }
-
 type scriptType int
 
 const (
