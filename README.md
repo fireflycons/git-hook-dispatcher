@@ -102,7 +102,11 @@ Some hooks need to receive one or more lines of data from git via standard input
 
 ```powershell
 # reference-transaction hook needs to read from stdin
-Write-Host "refrence-transaction started"
+param
+(
+    [string]$State
+)
+Write-Host "refrence-transaction started - state $state"
 
 $inputStream = [System.Console]::In
 
@@ -110,12 +114,16 @@ while ($line = $inputStream.ReadLine())
 {
     Write-Host "reference-transaction received stdin:" $line
 }
+
 ```
 
 The above if triggered by `reference-transaction` will output something like this
 
 ```
-refrence-transaction started
-reference-transaction received stdin: 6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 HEAD
-reference-transaction received stdin: 6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 refs/heads/master
+refrence-transaction started - state prepared
+reference-transaction received stdin: 37df81edea7f798982b66f4eadac531d3e730c88 baa414931de202d1abc809be2757660cb7542a5b HEAD
+reference-transaction received stdin: 37df81edea7f798982b66f4eadac531d3e730c88 baa414931de202d1abc809be2757660cb7542a5b refs/heads/master
+refrence-transaction started - state committed
+reference-transaction received stdin: 37df81edea7f798982b66f4eadac531d3e730c88 baa414931de202d1abc809be2757660cb7542a5b HEAD
+reference-transaction received stdin: 37df81edea7f798982b66f4eadac531d3e730c88 baa414931de202d1abc809be2757660cb7542a5b refs/heads/master
 ```
