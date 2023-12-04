@@ -98,7 +98,7 @@ If you do not have admin permission, then make copies:
 
 ## Cookbooks
 
-Some hooks need to receive one or more lines of data from git via standard input, e.g. `reference-transaction` and `pre-push`. In PowerShell you can capture `stdin` like this
+Some hooks need to receive one or more lines of data from git via standard input, e.g. [reference-transaction](https://git-scm.com/docs/githooks#_reference_transaction) and `pre-push`. In PowerShell you can capture `stdin` like this
 
 ```powershell
 # reference-transaction hook needs to read from stdin
@@ -106,7 +106,8 @@ param
 (
     [string]$State
 )
-Write-Host "refrence-transaction started - state $state"
+
+Write-Host "refrence-transaction started - state $State"
 
 $inputStream = [System.Console]::In
 
