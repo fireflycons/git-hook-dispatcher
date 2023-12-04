@@ -12,6 +12,7 @@ This little utility helps you to run native Windows scripts e.g. batch/cmd or Po
     * [Debugging](#debugging)
     * [Example](#example)
 * [Manual Setup](#manual-setup)
+* [Cookbooks](#cookbooks)
 
 ## Installation
 
