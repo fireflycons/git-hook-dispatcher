@@ -7,6 +7,12 @@ Setting up local hooks on Windows is problematic because git is built with POSIX
 
 This little utility helps you to run native Windows scripts e.g. batch/cmd or PowerShell when using git on Windows without needing git-bash or other such workarounds.
 
+* [Installation](#installation)
+* [How it works](#how-it-works)
+    * [Debugging](#debugging)
+    * [Example](#example)
+* [Manual Setup](#manual-setup)
+
 ## Installation
 
 You can quickly install it using the provided [install.ps1](./install.ps1) which will pull the latest release from github and set it up in `.githooks` in your user profile folder. If you run this script "As Administrator", then it will use symbolic links to create all the hook points, otherwise it will make a copy of the executable for each hook point (using more disk space). See below for more details on this.
@@ -89,3 +95,26 @@ If you do not have admin permission, then make copies:
 1. You can delete `hook.exe` as it won't be invoked directly.
 
 
+## Cookbooks
+
+Some hooks need to receive one or more lines of data from git via standard input, e.g. `reference-transaction` and `pre-push`. In PowerShell you can capture `stdin` like this
+
+```powershell
+# reference-transaction hook needs to read from stdin
+Write-Host "refrence-transaction started"
+
+$inputStream = [System.Console]::In
+
+while ($line = $inputStream.ReadLine())
+{
+    Write-Host "reference-transaction received stdin:" $line
+}
+```
+
+The above if triggered by `reference-transaction` will output something like this
+
+```
+refrence-transaction started
+reference-transaction received stdin: 6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 HEAD
+reference-transaction received stdin: 6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 refs/heads/master
+```

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -96,9 +95,11 @@ func getExitCode(ps *os.ProcessState) int {
 }
 
 func RunCommand(cmd *exec.Cmd) (exitCode int) {
-	var outbuf bytes.Buffer
-	cmd.Stdout = &outbuf
-	cmd.Stderr = &outbuf
+	// Redirect pipes of script to run
+	// attaching them to this process's pipes
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 
 	err := cmd.Run()
 
@@ -107,10 +108,6 @@ func RunCommand(cmd *exec.Cmd) (exitCode int) {
 		if exitError, ok := err.(*exec.ExitError); ok {
 			exitCode = getExitCode(exitError.ProcessState)
 		} else {
-			// This will happen (in OSX) if `name` is not available in $PATH,
-			// in this situation, exit code could not be get, and stderr will be
-			// empty string very likely, so we use the default fail code, and format err
-			// to string and set to stderr
 			exitCode = defaultFailedCode
 			fmt.Println(err.Error())
 		}
@@ -119,7 +116,6 @@ func RunCommand(cmd *exec.Cmd) (exitCode int) {
 		exitCode = getExitCode(cmd.ProcessState)
 	}
 
-	fmt.Println(outbuf.String())
 	return
 }
 
