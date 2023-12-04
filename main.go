@@ -132,7 +132,7 @@ func processHook(actualBin string, hookName string) (int, bool) {
 			fmt.Printf("(No script found for hook %s)\n", hookName)
 		}
 
-		// Exit zero (don't so action), and false to indicate no script run (for tests).
+		// Exit zero (don't stop action), and false to indicate no script run (for tests).
 		return 0, false
 	}
 

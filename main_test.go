@@ -54,8 +54,10 @@ func TestProcessReferenceTransactionHandlesStdin(t *testing.T) {
 	}
 
 	defer os.Remove(tmpfile.Name()) // clean up
+	tr1 := "6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 HEAD"
+	tr2 := "6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 refs/heads/master"
 
-	content := []byte("6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 HEAD\n6c6c4afa4352441ea7b1834eac7bc70aee8248ea 37df81edea7f798982b66f4eadac531d3e730c88 refs/heads/master\n")
+	content := []byte(fmt.Sprintf("%s\n%s\n", tr1, tr2))
 	if _, err := tmpfile.Write(content); err != nil {
 		t.Error(err)
 	}
@@ -64,12 +66,27 @@ func TestProcessReferenceTransactionHandlesStdin(t *testing.T) {
 		t.Error(err)
 	}
 
+	// Route the temp file to PowerShell's stdin.
 	oldStdin := os.Stdin
 	defer func() { os.Stdin = oldStdin }() // Restore original Stdin.
 
 	os.Stdin = tmpfile
 
+	// Capture output of invoked PowerShell script.
+	oldStdout := os.Stdout
+	defer func() { os.Stdout = oldStdout }() // Restore original Stdout.
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
 	vaildateScriptResult(t, "reference-transaction", 0, true)
+	w.Close()
+	outBytes, _ := io.ReadAll(r)
+	outString := string(outBytes)
+	fmt.Println(outString)
+
+	// Input transaction data is in the stdout of the PowerShell script?
+	require.Contains(t, outString, tr1)
+	require.Contains(t, outString, tr2)
 
 	if err := tmpfile.Close(); err != nil {
 		t.Error(err)
